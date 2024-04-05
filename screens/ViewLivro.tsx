@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import { useFonts, Poppins_400Regular } from '@expo-google-fonts/poppins';
@@ -35,70 +35,66 @@ export default function ViewLivro({ route, navigation }) {
     setRating(value);
   };
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !livro) {
     return null; 
   }
 
   return (
-    <View style={styles.container}>
-      {livro && (
-        <>
-          <Card style={styles.card}>
-            <Text style={styles.cardText}>
-              <Text>{livro.material || '-'}</Text>
-            </Text>
-            <View style={styles.ratingContainer}>
-                  {[1, 2, 3, 4, 5].map((star, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => handleRating(star)}
-                      activeOpacity={0.7}
-                    >
-                      <Icon
-                        name={rating >= star ? 'star' : 'star-o'}
-                        size={20}
-                        color={rating >= star ? '#FFD700' : '#C0C0C0'}
-                        style={styles.starIcon}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: livro.imagem }}
-                style={[styles.image, styles.shadow]}
-                resizeMode="contain" 
+    <ScrollView contentContainerStyle={styles.container}>
+      <Card style={styles.card}>
+      <Text style={styles.cardText}>
+          <Text>ISBN: {livro.isbnIssn}</Text>
+        </Text>
+        <View style={styles.ratingContainer}>
+          {[1, 2, 3, 4, 5].map((star, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleRating(star)}
+              activeOpacity={0.7}
+            >
+              <Icon
+                name={rating >= star ? 'star' : 'star-o'}
+                size={20}
+                color={rating >= star ? '#FFD700' : '#C0C0C0'}
+                style={styles.starIcon}
               />
-            </View>
-            <Card.Content style={styles.content}>
-              <View style={styles.titleContainer}> 
-                <Text style={styles.titulo}>{livro.titulo}</Text>
-                <TouchableOpacity onPress={toggleHeartColor}>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: livro.imagem }}
+            style={[styles.image, styles.shadow]}
+            resizeMode="contain" 
+          />
+        </View>
+        <Card.Content style={styles.content}>
+          <View style={styles.titleContainer}> 
+            <Text style={styles.titulo}>
+               {livro.obra} - <Text style={styles.valor}>{livro.titulo}</Text>
+            </Text>
+            <TouchableOpacity onPress={toggleHeartColor}>
               <Icon name="heart" size={20} color={heartColor} style={styles.heartIcon} />
             </TouchableOpacity>
-                
-              </View>
-              <Text style={styles.rotulo}>Autor: <Text style={styles.valor}>{livro.autorPrincipal || '-'}</Text></Text>
-              <Text style={styles.rotulo}>Ano: <Text style={styles.valor}>{livro.ano || '-'}</Text></Text>
-              <Text style={styles.rotulo}>Editora: <Text style={styles.valor}>{livro.editora || '-'}</Text></Text>
-              <Text style={styles.rotulo}>ISBN: <Text style={styles.valor}>{livro.isbnIssn || '-'}</Text></Text>
-              <Text style={styles.rotulo}>Material: <Text style={styles.valor}>{livro.material || '-'}</Text></Text>
-              <Text style={styles.rotulo}>Edição: <Text style={styles.valor}>{livro.edicao || '-'}</Text></Text>
-            </Card.Content>
-          </Card>
-          <Button onPress={() => navigation.goBack()} style={styles.button}>
-            <Text style={styles.buttonText}>Voltar</Text>
-          </Button>
-        </>
-      )}
-    </View>
+          </View>
+          <Text style={styles.rotulo}>Ano: <Text style={styles.valor}>{livro.ano || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Assuntos: <Text style={styles.valor}>{livro.assuntos || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Autor Principal: <Text style={styles.valor}>{livro.autorPrincipal || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Autores: <Text style={styles.valor}>{livro.autores || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Edição: <Text style={styles.valor}>{livro.edicao || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Editora: <Text style={styles.valor}>{livro.editora || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Idioma: <Text style={styles.valor}>{livro.idioma || '-'}</Text></Text>
+          <Text style={styles.rotulo}>Material: <Text style={styles.valor}>{livro.material || '-'}</Text></Text>
+        </Card.Content>
+      </Card>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     paddingTop: 20,
     backgroundColor: '#B0E0E6',
     alignItems: 'center',
@@ -118,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8FF'
   },
   cardText: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#808080',
     fontStyle: 'italic',
     fontFamily: 'Poppins_400Regular',
@@ -176,22 +172,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     fontWeight: 'normal',
-    fontFamily: 'Poppins_400Regular',
-  },
-  button: {
-    marginTop: 20,
-    marginBottom: 15,
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    elevation: 5,
-    borderWidth: 1, 
-  },
-  buttonText: {
-    color: '#363636',
-    fontSize: 15,
-    fontWeight: 'bold',
     fontFamily: 'Poppins_400Regular',
   },
   ratingContainer: {
